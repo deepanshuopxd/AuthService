@@ -1,4 +1,5 @@
-const { User} = require('../models/index');
+const { isAdmin } = require('../controllers/user-controller');
+const { User,Role} = require('../models/index');
 
 class UserRepository {
     async create(data){
@@ -60,6 +61,20 @@ class UserRepository {
     //         console.log("There is error while updating password")
     //     }
     // }
+    async isAdmin(userId){
+        try {
+            const user  = await User.findByPk(userId);
+            const adminRole  = await Role.findOne({
+                where:{
+                    name:'ADMIN'
+                }
+            });
+            return user.hasRole(adminRole);
+        } catch (error) {
+            console.log("something went wrong in the user repo layer");
+            throw error;
+        }
+    }
 }
 
 module.exports = UserRepository;
